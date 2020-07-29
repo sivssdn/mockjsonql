@@ -11,6 +11,5 @@ func main() {
 		"{operationName:availabilitiesByArea,variables:{areaId:5d88f1b89259f80004fe9d51,weekAndYear:302020},query:query availabilitiesByArea($areaId: ObjectId!, $weekAndYear: String, $onDates: [DateTime!]) {\\n  availabilitiesByArea(areaId: $areaId, weekAndYear: $weekAndYear, onDates: $onDates) {\\n    _id\\n    availability\\n    onDate\\n    isOnLateStandBy\\n    user {\\n      _id\\n      name {\\n        full\\n        initials\\n        __typename\\n      }\\n      roles\\n      color\\n      status\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n}",
 	}
 	// fmt.Println(queries)
-	gql.Segregate(queries[2])
-	gql.SegregateQuery(queries[1])
+	gql.GetQueriedJSON(queries[2])
 }

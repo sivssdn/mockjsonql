@@ -2,31 +2,31 @@ package gql
 
 import (
 	"encoding/json"
-	"fmt"
 	"regexp"
 	"strings"
 )
 
-//separates the string query into operationName, variable & query
-func Segregate(fullQuery string) {
+//segregate separates the string query into operationName, variable & query
+func segregate(fullQuery string) map[string]interface{} {
 	operationName := getSubstring("operationName:", fullQuery, ",")
 	variables := getSubstring("variables:{", fullQuery, "},")
-	fmt.Println("operationName :", operationName)
-	fmt.Println("variables :", variables)
-	// fmt.Println(getSubstring("query:query", fullQuery, "}"))
+	jsonQuery := segregateQuery(fullQuery)
+	return map[string]interface{}{"operationName": operationName, "variables": variables, "jsonQuery": jsonQuery}
 }
 
-func SegregateQuery(fullQuery string) {
+//segregateQuery converts the raw string to it's equivalent JSON
+func segregateQuery(fullQuery string) interface{} {
 	endDelimiter := "++,+"
 	query := getSubstring("{\\n", fullQuery+endDelimiter, endDelimiter)
 	query = getSubstring("{\\n", fullQuery+endDelimiter, endDelimiter)
-	jsonQueryString := queryToJson(query)
+	jsonQueryString := queryToJSON(query)
 	var jsonQuery interface{}
 	json.Unmarshal([]byte(jsonQueryString), &jsonQuery)
-	fmt.Println(jsonQuery)
+	return jsonQuery
 }
 
-func queryToJson(query string) string {
+//queryToJSON receives string gql query and returns its json (string) equivalent
+func queryToJSON(query string) string {
 	var re = regexp.MustCompile(",[ ]*\"[ ]*}")
 	jsonQuery := "{\"" + strings.ReplaceAll(query, "{\\n", "\":{\"")
 	jsonQuery = strings.ReplaceAll(jsonQuery, "}\\n", "},\"")
