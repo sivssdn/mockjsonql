@@ -2,6 +2,8 @@ package gql
 
 import (
 	"encoding/json"
+	"fmt"
+	"strings"
 )
 
 //GetQueriedJSON accepts raw query string and retuns quried data from result json
@@ -12,11 +14,11 @@ func GetQueriedJSON(rawQuery string) {
 	schema := query["schema"]
 
 	tmpData := `[{
-        "    _id": "144_1",
+        "_id": "144_1",
         "    availability": "mockAavailabilityValue_1",
-        "    onDate": "mockOnDate_1",
-        "    isOnLateStandBy": "onisOnLateStandBy_1",
-        "    user ": {
+        "onDate": "mockOnDate_1",
+        "isOnLateStandBy": "onisOnLateStandBy_1",
+        "user ": {
             "      _id": "user_id_1",
             "      name ": {
                 "        full": "name_full_1",
@@ -43,12 +45,12 @@ func queryJSON(schema, inputData interface{}) {
 	for _, value := range data {
 		result = make(map[string]interface{})
 		for mockKey, mockValue := range value {
-			_, ok := schemaObj[mockKey]
+			_, ok := schemaObj[strings.ReplaceAll(mockKey, " ", "")]
 			if ok == true {
 				result[mockKey] = mockValue
 			}
 		}
 		results = append(results, result)
 	}
-
+	fmt.Println(results)
 }

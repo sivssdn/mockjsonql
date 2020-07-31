@@ -32,6 +32,7 @@ func queryToJSONSchema(query string) string {
 	jsonQuery = strings.ReplaceAll(jsonQuery, "}\\n", "},\"")
 	jsonQuery = strings.ReplaceAll(jsonQuery, "\\n", "\":\"\",\"")
 	jsonQuery = re.ReplaceAllString(jsonQuery, "}")
+	jsonQuery = strings.ReplaceAll(jsonQuery, " ", "")
 	lastBracketIndex := strings.LastIndex(jsonQuery, "}")
 	return jsonQuery[0 : lastBracketIndex-1]
 }
