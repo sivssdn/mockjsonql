@@ -7,9 +7,7 @@ import (
 )
 
 //GetQueriedJSON accepts raw query string and retuns quried data from result json
-func GetQueriedJSON(rawQuery string) {
-	// segregate(rawQuery)
-	// fmt.Println(segregate(rawQuery))
+func GetQueriedJSON(rawQuery string) string {
 	query := segregate(rawQuery)
 	schema := query["schema"]
 
@@ -33,19 +31,32 @@ func GetQueriedJSON(rawQuery string) {
         "    __typename": "__typename_outer_1"
     }]`
 
-	queryJSON(schema, tmpData)
+	result := queryJSON(schema, tmpData)
+	resultString, _ := json.Marshal(result)
+	return string(resultString)
 }
 
-func queryJSON(schema, inputData interface{}) {
-	var data, results []map[string]interface{}
-	var result map[string]interface{}
+func queryJSON(schema, inputData interface{}) interface{} {
+	var dataArray, results []map[string]interface{}
+	var result, data map[string]interface{}
 	schemaObj := schema.(map[string]interface{})
-	json.Unmarshal([]byte(inputData.(string)), &data)
-	for _, value := range data {
-		result = diffJSON(schemaObj, value)
-		results = append(results, result)
+
+	err := json.Unmarshal([]byte(inputData.(string)), &dataArray)
+	if err == nil {
+		//array json
+		for _, value := range dataArray {
+			result = diffJSON(schemaObj, value)
+			results = append(results, result)
+		}
+		return results
 	}
-	// fmt.Println(results)
+	//non-array json
+	err = json.Unmarshal([]byte(inputData.(string)), &data)
+	if err != nil {
+		//malformed json
+		fmt.Println("JSON data input is malformed")
+	}
+	return diffJSON(schemaObj, data)
 }
 
 func diffJSON(schemaObj, data map[string]interface{}) map[string]interface{} {
@@ -53,14 +64,17 @@ func diffJSON(schemaObj, data map[string]interface{}) map[string]interface{} {
 	for mockKey, mockValue := range data {
 		nestedSchema, ok := schemaObj[strings.ReplaceAll(mockKey, " ", "")]
 		if ok == true {
-			result[mockKey] = mockValue
+			// result[mockKey] = mockValue
 			switch mockValue.(type) {
 			case string:
-				fmt.Println("string", nestedSchema)
-				// result[mockKey] = mockValue
+				result[mockKey] = mockValue
 			case map[string]interface{}, []map[string]interface{}:
-				fmt.Println("map", nestedSchema)
-				// result[mockKey] = queryJSON()
+				jsonValueObj, err := json.Marshal(mockValue)
+				if err != nil {
+					result[mockKey] = "malformed json"
+					continue
+				}
+				result[mockKey] = queryJSON(nestedSchema, string(jsonValueObj))
 			}
 		}
 	}
