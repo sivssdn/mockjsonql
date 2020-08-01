@@ -7,15 +7,16 @@ import (
 )
 
 //GetQueriedJSON accepts raw query string and retuns quried data from result json
-func GetQueriedJSON(rawQuery string) string {
+func GetQueriedJSON(rawQuery string) []byte {
 	query := segregate(rawQuery)
 	schema := query["schema"]
 	resolverData := getResolverData("availabilitiesByArea")
 	result := queryJSON(schema, resolverData)
 	resultString, _ := json.Marshal(result)
-	return string(resultString)
+	return resultString
 }
 
+//accepts schema and data from mock resolver and returns filtered data based on schema
 func queryJSON(schema, inputData interface{}) interface{} {
 	var dataArray, results []map[string]interface{}
 	var result, data map[string]interface{}
@@ -38,6 +39,7 @@ func queryJSON(schema, inputData interface{}) interface{} {
 	return diffJSON(schemaObj, data)
 }
 
+//filters mock keys based on schema for a mockData object
 func diffJSON(schemaObj, data map[string]interface{}) map[string]interface{} {
 	result := make(map[string]interface{})
 	for mockKey, mockValue := range data {

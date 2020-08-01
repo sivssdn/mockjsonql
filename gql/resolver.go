@@ -17,7 +17,6 @@ type resolver struct {
 * @input resolverName string - name of the resolver for which data is to be returned
 * @returns string equivalent of json result data
  */
-
 func getResolverData(queryResolverName string) string {
 	defer func() {
 		if err := recover(); err != nil {
