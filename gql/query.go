@@ -10,28 +10,8 @@ import (
 func GetQueriedJSON(rawQuery string) string {
 	query := segregate(rawQuery)
 	schema := query["schema"]
-
-	tmpData := `[{
-        "_id": "144_1",
-        "    availability": "mockAavailabilityValue_1",
-        "onDate": "mockOnDate_1",
-        "isOnLateStandBy": "onisOnLateStandBy_1",
-        "user ": {
-            "      _id": "user_id_1",
-            "      name ": {
-                "        full": "name_full_1",
-                "        initials": "intitials_1",
-                "        __typename": "__typename_1"
-            },
-            "      roles": "roles_1",
-            "      color": "color_1",
-            "      status": "status_1",
-            "      __typename": "__typename_1"
-        },
-        "    __typename": "__typename_outer_1"
-    }]`
-
-	result := queryJSON(schema, tmpData)
+	resolverData := getResolverData("availabilitiesByArea")
+	result := queryJSON(schema, resolverData)
 	resultString, _ := json.Marshal(result)
 	return string(resultString)
 }
@@ -40,7 +20,6 @@ func queryJSON(schema, inputData interface{}) interface{} {
 	var dataArray, results []map[string]interface{}
 	var result, data map[string]interface{}
 	schemaObj := schema.(map[string]interface{})
-
 	err := json.Unmarshal([]byte(inputData.(string)), &dataArray)
 	if err == nil {
 		//array json
