@@ -41,16 +41,28 @@ func queryJSON(schema, inputData interface{}) {
 	var result map[string]interface{}
 	schemaObj := schema.(map[string]interface{})
 	json.Unmarshal([]byte(inputData.(string)), &data)
-
 	for _, value := range data {
-		result = make(map[string]interface{})
-		for mockKey, mockValue := range value {
-			_, ok := schemaObj[strings.ReplaceAll(mockKey, " ", "")]
-			if ok == true {
-				result[mockKey] = mockValue
-			}
-		}
+		result = diffJSON(schemaObj, value)
 		results = append(results, result)
 	}
-	fmt.Println(results)
+	// fmt.Println(results)
+}
+
+func diffJSON(schemaObj, data map[string]interface{}) map[string]interface{} {
+	result := make(map[string]interface{})
+	for mockKey, mockValue := range data {
+		nestedSchema, ok := schemaObj[strings.ReplaceAll(mockKey, " ", "")]
+		if ok == true {
+			result[mockKey] = mockValue
+			switch mockValue.(type) {
+			case string:
+				fmt.Println("string", nestedSchema)
+				// result[mockKey] = mockValue
+			case map[string]interface{}, []map[string]interface{}:
+				fmt.Println("map", nestedSchema)
+				// result[mockKey] = queryJSON()
+			}
+		}
+	}
+	return result
 }
