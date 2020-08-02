@@ -8,9 +8,10 @@ import (
 )
 
 func main() {
-	fmt.Println("Server started at port 8080 🚀🚀")
 	http.HandleFunc("/", queryResolver)
-	http.ListenAndServe(":8080", nil)
+	go http.ListenAndServe(":3000", nil)
+	fmt.Println("Server started at port 3000 🚀🚀")
+	<-make(chan int)
 }
 
 func queryResolver(res http.ResponseWriter, req *http.Request) {

@@ -25,7 +25,7 @@ func queryJSON(schema, inputData interface{}) interface{} {
 	if err == nil {
 		//array json
 		for _, value := range dataArray {
-			result = diffJSON(schemaObj, value)
+			result = filterJSON(schemaObj, value)
 			results = append(results, result)
 		}
 		return results
@@ -36,11 +36,11 @@ func queryJSON(schema, inputData interface{}) interface{} {
 		//malformed json
 		fmt.Println("JSON data input is malformed")
 	}
-	return diffJSON(schemaObj, data)
+	return filterJSON(schemaObj, data)
 }
 
 //filters mock keys based on schema for a mockData object
-func diffJSON(schemaObj, data map[string]interface{}) map[string]interface{} {
+func filterJSON(schemaObj, data map[string]interface{}) map[string]interface{} {
 	result := make(map[string]interface{})
 	for mockKey, mockValue := range data {
 		nestedSchema, ok := schemaObj[strings.ReplaceAll(mockKey, " ", "")]
