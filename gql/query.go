@@ -25,7 +25,7 @@ func queryJSON(schema, inputData, filterVariables interface{}) interface{} {
 	if err == nil {
 		//array json
 		for _, value := range dataArray {
-			result = filterJSON(schemaObj, value)
+			result = filterJSON(schemaObj, value, filterVariables)
 			results = append(results, result)
 		}
 		return results
@@ -37,15 +37,18 @@ func queryJSON(schema, inputData, filterVariables interface{}) interface{} {
 		fmt.Println("JSON data input from resolvers.json is empty or malformed")
 		return make(map[string]interface{}, 1) //returning empty object
 	}
-	return filterJSON(schemaObj, data)
+	return filterJSON(schemaObj, data, filterVariables)
 }
 
 //filters mock keys based on schema for a mockData object
-func filterJSON(schemaObj, data map[string]interface{}) map[string]interface{} {
+func filterJSON(schemaObj, data map[string]interface{}, filterVariables interface{}) map[string]interface{} {
 	result := make(map[string]interface{})
+	if !isObjValid(data, filterVariables) {
+		return result
+	}
 	for mockKey, mockValue := range data {
-		nestedSchema, ok := schemaObj[strings.ReplaceAll(mockKey, " ", "")]
-		if ok == true {
+		nestedSchema, exists := schemaObj[strings.ReplaceAll(mockKey, " ", "")]
+		if exists {
 			// result[mockKey] = mockValue
 			switch mockValue.(type) {
 			case string:
@@ -56,9 +59,31 @@ func filterJSON(schemaObj, data map[string]interface{}) map[string]interface{} {
 					result[mockKey] = "malformed json"
 					continue
 				}
-				result[mockKey] = queryJSON(nestedSchema, string(jsonValueObj), "")
+				result[mockKey] = queryJSON(nestedSchema, string(jsonValueObj), make(map[string]string))
 			}
 		}
 	}
 	return result
 }
+
+//checks if the query variables match the mock data object
+func isObjValid(data map[string]interface{}, variables interface{}) bool {
+	queryVariables := variables.(map[string]string)
+	if len(queryVariables) < 1 {
+		return true
+	}
+	isValid := 1
+	for variable, variableValue := range queryVariables {
+		fieldValue, exists := data[variable]
+		if exists && strings.EqualFold(fieldValue.(string), variableValue) {
+			isValid = isValid * 1
+			continue
+		}
+		isValid = 0
+	}
+	if isValid == 1 { 
+		return true
+	}
+	return false
+}
+//todo:: int and float comparion inside isObjValid  //====-----
