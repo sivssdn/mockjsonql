@@ -1,6 +1,7 @@
 package gql
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -15,4 +16,10 @@ func getSubstring(start, fullString, end string) string {
 		return ""
 	}
 	return fullString[startIndex:endIndex]
+}
+
+func checkErr(err error, message string) {
+	if err != nil {
+		fmt.Println(message)
+	}
 }

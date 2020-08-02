@@ -10,14 +10,14 @@ import (
 func GetQueriedJSON(rawQuery string) []byte {
 	query := segregate(rawQuery)
 	schema := query["schema"]
-	resolverData := getResolverData("availabilitiesByArea")
-	result := queryJSON(schema, resolverData)
+	resolverData := getResolverData(query["operationName"].(string))
+	result := queryJSON(schema, resolverData, query["variables"])
 	resultString, _ := json.Marshal(result)
 	return resultString
 }
 
 //accepts schema and data from mock resolver and returns filtered data based on schema
-func queryJSON(schema, inputData interface{}) interface{} {
+func queryJSON(schema, inputData, filterVariables interface{}) interface{} {
 	var dataArray, results []map[string]interface{}
 	var result, data map[string]interface{}
 	schemaObj := schema.(map[string]interface{})
@@ -33,8 +33,9 @@ func queryJSON(schema, inputData interface{}) interface{} {
 	//non-array json
 	err = json.Unmarshal([]byte(inputData.(string)), &data)
 	if err != nil {
-		//malformed json
-		fmt.Println("JSON data input is malformed")
+		//malformed/empty json
+		fmt.Println("JSON data input from resolvers.json is empty or malformed")
+		return make(map[string]interface{}, 1) //returning empty object
 	}
 	return filterJSON(schemaObj, data)
 }
@@ -55,7 +56,7 @@ func filterJSON(schemaObj, data map[string]interface{}) map[string]interface{} {
 					result[mockKey] = "malformed json"
 					continue
 				}
-				result[mockKey] = queryJSON(nestedSchema, string(jsonValueObj))
+				result[mockKey] = queryJSON(nestedSchema, string(jsonValueObj), "")
 			}
 		}
 	}

@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/", queryResolver)
+	http.HandleFunc("/graphql", queryResolver)
 	go http.ListenAndServe(":3000", nil)
 	fmt.Println("Server started at port 3000 🚀🚀")
 	<-make(chan int)
