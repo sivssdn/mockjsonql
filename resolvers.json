@@ -1,25 +1,17 @@
 [
     {
-        "name": "availabilitiesByArea",
+        "name": "availabilities",
         "data": [
             {
                 "_id": 1441.2,
-                "    availability": "mockAavailabilityValue_1",
-                "onDate": "mockOnDate_1",
-                "isOnLateStandBy": "onisOnLateStandBy_1",
+                "availability": "yes",
                 "user ": {
-                    "      _id": "user_id_1",
-                    "      name ": {
-                        "        full": "name_full_1",
-                        "        initials": "intitials_1",
-                        "        __typename": "__typename_1"
+                    "_id": "user_id_1",
+                    "name ": {
+                        "full": "name_full_1",
                     },
-                    "      roles": "roles_1",
-                    "      color": "color_1",
-                    "      status": "status_1",
-                    "      __typename": "__typename_1"
-                },
-                "    __typename": "__typename_outer_1"
+                    "roles": "roles_1"
+                }
             }
         ]
     },
@@ -27,11 +19,10 @@
         "name": "HelloQuery",
         "data": [
             {
-                "name": "BMW",
-                "engine": "V10"
+                "name": "BMW"
             },
             {
-                "model": "S8"
+                "name": "Audi"
             }
         ]
     }
