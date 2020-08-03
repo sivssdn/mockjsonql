@@ -3,7 +3,7 @@
         "name": "availabilitiesByArea",
         "data": [
             {
-                "_id": "144_1",
+                "_id": 1441.2,
                 "    availability": "mockAavailabilityValue_1",
                 "onDate": "mockOnDate_1",
                 "isOnLateStandBy": "onisOnLateStandBy_1",

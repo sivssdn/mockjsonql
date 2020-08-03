@@ -73,17 +73,23 @@ func isObjValid(data map[string]interface{}, variables interface{}) bool {
 		return true
 	}
 	isValid := 1
+	var stringFieldValue string
 	for variable, variableValue := range queryVariables {
 		fieldValue, exists := data[variable]
-		if exists && strings.EqualFold(fieldValue.(string), variableValue) {
+		switch fieldValue.(type) {
+		case string:
+			stringFieldValue = fieldValue.(string)
+		default:
+			stringFieldValue = fmt.Sprint(fieldValue)
+		}
+		if exists && strings.EqualFold(stringFieldValue, variableValue) {
 			isValid = isValid * 1
 			continue
 		}
 		isValid = 0
 	}
-	if isValid == 1 { 
+	if isValid == 1 {
 		return true
 	}
 	return false
 }
-//todo:: int and float comparion inside isObjValid  //====-----

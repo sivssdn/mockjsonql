@@ -20,6 +20,6 @@ func getSubstring(start, fullString, end string) string {
 
 func checkErr(err error, message string) {
 	if err != nil {
-		fmt.Println(message)
+		fmt.Println(message, "\n", err)
 	}
 }
