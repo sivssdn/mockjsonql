@@ -33,7 +33,6 @@ func getResolverData(queryResolverName string) string {
 		panic("Couldn't read/find data from resolvers.json")
 	}
 	var result []byte
-	// var result resolver
 	for _, resolver := range resolvers {
 		if strings.EqualFold(resolver.Name, queryResolverName) {
 			result, _ = json.Marshal(resolver.Data)
