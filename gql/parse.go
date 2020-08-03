@@ -8,11 +8,12 @@ import (
 
 //segregate separates the string query into operationName, variable & query
 func segregate(fullQuery string) map[string]interface{} {
+	fullQuery = strings.ReplaceAll(fullQuery, "\"", "")
 	operationName := getSubstring("operationName:", fullQuery, ",")
 	variables, jsonSchema := make(chan interface{}), make(chan interface{})
 	go segregateVariables(fullQuery, variables)
 	go segregateQuery(fullQuery, jsonSchema)
-	return map[string]interface{}{"operationName": operationName, "variables": <- variables, "schema": <- jsonSchema}
+	return map[string]interface{}{"operationName": operationName, "variables": <-variables, "schema": <-jsonSchema}
 }
 
 //segregateQuery converts the raw string to it's equivalent JSON
@@ -35,12 +36,15 @@ func queryToJSONSchema(query string) string {
 	jsonQuery = re.ReplaceAllString(jsonQuery, "}")
 	jsonQuery = strings.ReplaceAll(jsonQuery, " ", "")
 	lastBracketIndex := strings.LastIndex(jsonQuery, "}")
+	if lastBracketIndex == -1 {
+		lastBracketIndex = 1
+	}
 	return jsonQuery[0 : lastBracketIndex-1]
 }
 
 //segregateVariables receives raw query string and returns key-value pair for the queried variables with their values
 func segregateVariables(fullQuery string, result chan interface{}) {
-	fullQuery = "{\""+getSubstring("variables:{", fullQuery, "},")+"\"}"
+	fullQuery = "{\"" + getSubstring("variables:{", fullQuery, "},") + "\"}"
 	fullQuery = strings.ReplaceAll(fullQuery, ":", "\":\"")
 	fullQuery = strings.ReplaceAll(fullQuery, ",", "\",\"")
 	var variableObj map[string]string

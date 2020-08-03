@@ -3,6 +3,7 @@ package gql
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"strings"
 )
 
@@ -26,7 +27,9 @@ func queryJSON(schema, inputData, filterVariables interface{}) interface{} {
 		//array json
 		for _, value := range dataArray {
 			result = filterJSON(schemaObj, value, filterVariables)
-			results = append(results, result)
+			if len(result) > 0 {
+				results = append(results, result)
+			}
 		}
 		return results
 	}
@@ -34,7 +37,7 @@ func queryJSON(schema, inputData, filterVariables interface{}) interface{} {
 	err = json.Unmarshal([]byte(inputData.(string)), &data)
 	if err != nil {
 		//malformed/empty json
-		fmt.Println("JSON data input from resolvers.json is empty or malformed")
+		log.Println(err, "\nJSON data input from resolvers.json is empty or malformed")
 		return make(map[string]interface{}, 1) //returning empty object
 	}
 	return filterJSON(schemaObj, data, filterVariables)

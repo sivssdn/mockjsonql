@@ -2,8 +2,8 @@ package gql
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"strings"
 )
 
@@ -20,7 +20,7 @@ type resolver struct {
 func getResolverData(queryResolverName string) string {
 	defer func() {
 		if err := recover(); err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 	}()
 	file, err := ioutil.ReadFile("resolvers.json")
@@ -32,6 +32,7 @@ func getResolverData(queryResolverName string) string {
 	if err != nil {
 		panic("Couldn't read/find data from resolvers.json")
 	}
+
 	var result []byte
 	for _, resolver := range resolvers {
 		if strings.EqualFold(resolver.Name, queryResolverName) {

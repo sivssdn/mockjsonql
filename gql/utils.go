@@ -1,7 +1,7 @@
 package gql
 
 import (
-	"fmt"
+	"log"
 	"strings"
 )
 
@@ -20,6 +20,6 @@ func getSubstring(start, fullString, end string) string {
 
 func checkErr(err error, message string) {
 	if err != nil {
-		fmt.Println(message, "\n", err)
+		log.Println(message, "\n", err)
 	}
 }
